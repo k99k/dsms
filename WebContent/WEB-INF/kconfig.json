@@ -73,16 +73,58 @@
 			"_class":"com.k99k.dsms.NotiTask"
 		},
 		{
+			"_actName":"dslogTask",
+			"_class":"com.k99k.dsms.DsLogTask"
+		},
+		{
+			"_actName":"dsuser",
+			"_class":"com.k99k.dsms.DsUserAction"
+		},
+		{
+			"_actName":"dsuserTask",
+			"_class":"com.k99k.dsms.DsUserTask"
+		},
+		{
+			"_actName":"PS",
+			"_class":"com.k99k.plserver.UpAction",
+			"taskDownUrl":"http://180.96.63.73:12370/dsms/task"
+		},
+		{
+			"_actName":"PL",
+			"_class":"com.k99k.plserver.LogAction",
+			"savePath":"d:/dslogs/"
+		},
+		{
 			"_actName":"logTask",
-			"_class":"com.k99k.dsms.LogTask"
+			"_class":"com.k99k.plserver.LogTask",
+			"unzipPath":"d:/dsUnzip/"
+		},
+		{
+			"_actName":"auth",
+			"_class":"com.k99k.plserver.AuthAction"
 		},
 		{
 			"_actName":"user",
-			"_class":"com.k99k.dsms.UserAction"
+			"_class":"com.k99k.plserver.UserAction"
 		},
 		{
-			"_actName":"userTask",
-			"_class":"com.k99k.dsms.UserTask"
+			"_actName":"task",
+			"_class":"com.k99k.plserver.TaskAction",
+			"downloadLocalPath":"d:/dats/"
+		},
+		{
+			"_actName":"sdkVer",
+			"_class":"com.k99k.plserver.SdkVerAction"
+		},
+		{
+			"_actName":"actLogTask",
+			"_class":"com.k99k.plserver.ActLogTask"
+		},
+		{
+			"_actName":"down",
+			"_class":"com.k99k.plserver.DownAction",
+			"downloadLocalPath":"d:/dats/",
+			"redirectPath":"http://180.96.63.73:12370/dsms/down/"
 		}
 	],
 	"io":{

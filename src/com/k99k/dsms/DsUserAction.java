@@ -5,35 +5,25 @@ package com.k99k.dsms;
 
 import com.k99k.khunter.Action;
 import com.k99k.khunter.ActionMsg;
-import com.k99k.plserver.StaticDao;
 
 /**
+ * 短信用户，即最终用户
  * @author Keel
  *
  */
-public class EndAction extends Action {
+public class DsUserAction extends Action {
 
 	/**
 	 * @param name
 	 */
-	public EndAction(String name) {
+	public DsUserAction(String name) {
 		super(name);
 	}
 
 	@Override
 	public ActionMsg act(ActionMsg msg) {
+		// TODO USER相关的crud等操作
 		return super.act(msg);
-	}
-
-	@Override
-	public void exit() {
-		super.exit();
-	}
-
-	@Override
-	public void init() {
-		super.init();
-		StaticDao.initS();
 	}
 	
 	

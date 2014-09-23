@@ -5,36 +5,26 @@ package com.k99k.dsms;
 
 import com.k99k.khunter.Action;
 import com.k99k.khunter.ActionMsg;
-import com.k99k.plserver.StaticDao;
 
 /**
  * @author Keel
  *
  */
-public class EndAction extends Action {
+public class DsLogTask extends Action {
 
 	/**
 	 * @param name
 	 */
-	public EndAction(String name) {
+	public DsLogTask(String name) {
 		super(name);
 	}
 
 	@Override
 	public ActionMsg act(ActionMsg msg) {
+		// TODO Auto-generated method stub
 		return super.act(msg);
 	}
-
-	@Override
-	public void exit() {
-		super.exit();
-	}
-
-	@Override
-	public void init() {
-		super.init();
-		StaticDao.initS();
-	}
+	
 	
 	
 
