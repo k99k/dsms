@@ -33,7 +33,7 @@ public class LogAction extends Action {
 	/**
 	 * 日志文件保存路径
 	 */
-	private String savePath = "/usr/works/dsms/logs/";
+	private String savePath = "/usr/plserver/logs/";
     
 
 	@Override

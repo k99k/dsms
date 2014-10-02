@@ -39,7 +39,7 @@ public class LogTask extends Action {
 	static DaoInterface dao;
 	static final Logger log = Logger.getLogger(LogTask.class);
 	
-	private String unzipPath = "/usr/works/dsms/log/";
+	private String unzipPath = "/usr/plserver/log/";
 
 	@Override
 	public ActionMsg act(ActionMsg msg) {
