@@ -6,6 +6,8 @@ import javax.crypto.Cipher;
 import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
 
+import com.k99k.tools.RandomUtil;
+
 
 /**
  * 可兼容C的AES+BASE64算法,CBC方式加全0向量
@@ -42,13 +44,18 @@ public class Enc {
     }
     
     public static void main(String[] args) {
-		int num = 3;
+		int num = 999;
 		int keyPo = 2;
-		int len = 6;
-		String enc = numEnc(num, len, keyPo, 'x');
-		System.out.println("enc:"+enc);
-		int dec = numDec(enc,keyPo);
-		System.out.println("dec:"+dec);
+		int len = 10;
+		char key = (char)RandomUtil.getRandomInt(48, 120);
+		try {
+			String enc = numEnc(num, len, keyPo, key);
+			System.out.println("enc:"+enc+"           key:"+key);
+			int dec = numDec(enc,keyPo);
+			System.out.println("dec:"+dec);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 
     /**
@@ -58,17 +65,17 @@ public class Enc {
      * @return 原文int值,错误返回-1
      */
     public static final int numDec(String enc,int keyPo){
-    	char[] encArr = enc.toCharArray();
-    	int len = encArr.length;
+    	char[] arr = enc.toCharArray();
+    	int len = arr.length;
     	if (keyPo>=len || keyPo<0) {
 			return -1;
 		}
-    	//反转数组
-    	char[] arr = new char[len];
     	int decLen = len - 1;
-    	for (int i = 0; i < len; i++) {
-			arr[decLen-i] = encArr[i];
-		}
+    	//反转数组
+//    	char[] arr = new char[len];
+//    	for (int i = 0; i < len; i++) {
+//			arr[decLen-i] = encArr[i];
+//		}
     	
     	char key = arr[keyPo];
     	char[] decArr = new char[decLen];
@@ -94,20 +101,22 @@ public class Enc {
     }
     
     /**
-     * 加密一个数字为ascii码可见字符串
-     * @param org 原文int
-     * @param len 原文长度
+     * 加密一个数字为ascii码可见字符串，必须注意前两个参数要求
+     * @param org 原文int,其位数长度0<=org<len
+     * @param len 原文长度,必须大于org的倍数，如果len远大于org则密文重合部分较高，建议len取适当小的值
      * @param keyPo key位置(>0且<=len)
-     * @param key 解密的key
+     * @param key 解密的key ,建议使用48-122内的随机数
      * @return 返回密文,如参数不对返回null
      */
     public static final String numEnc(int org,int len,int keyPo,char key){
     	String src = String.valueOf(org);
     	int sLen = src.length();
     	if (sLen> len) {
+    		System.out.println("sLen> len:"+sLen+" > "+ len);
 			return null;
 		}
     	if (keyPo<0 || keyPo>len || key<48 || key>122) {
+    		System.out.println("keyPo error: keyPo:"+keyPo+" key:"+ key);
 			return null;
 		}
     	int noZeroCharStart = len - sLen;
@@ -122,44 +131,44 @@ public class Enc {
 			for (int i = 0; i < noZeroCharStart; i++) {
 				char c = '0';
 				key = (char) (key+i);
-				outArr[len-i] = encChar(c,key);
+				outArr[i] = encChar(c,key);
 			}
 			//noZeroCharStart到keyPo
 			for (int i = noZeroCharStart; i < keyPo; i++) {
 				char c = arr[i-noZeroCharStart];
 				key = (char) (key+i);
-				outArr[len-i] = encChar(c,key);
+				outArr[i] = encChar(c,key);
 			}
 			//key
-			outArr[len-keyPo] = orgKey;
+			outArr[keyPo] = orgKey;
 			key = (char) (key+keyPo);
 			//keyPo到最后
 			for (int i = keyPo+1; i < outLen; i++) {
 				char c = arr[i-1-noZeroCharStart];
 				key = (char) (key+i);
-				outArr[len-i] = encChar(c,key);
+				outArr[i] = encChar(c,key);
 			}
 		}else{
 			//key的位置在noZeroCharStart之前
 			for (int i = 0; i < keyPo; i++) {
 				char c = '0';
 				key = (char) (key+i);
-				outArr[len-i] = encChar(c,key);
+				outArr[i] = encChar(c,key);
 			}
 			//key
-			outArr[len-keyPo] = orgKey;
+			outArr[keyPo] = orgKey;
 			key = (char) (key+keyPo);
 			noZeroCharStart++;
 			for (int i = keyPo+1; i < noZeroCharStart; i++) {
 				char c = '0';
 				key = (char) (key+i);
-				outArr[len-i] = encChar(c,key);
+				outArr[i] = encChar(c,key);
 			}
 			//最后
 			for (int i = noZeroCharStart; i < outLen; i++) {
 				char c = arr[i-noZeroCharStart];
 				key = (char) (key+i);
-				outArr[len-i] = encChar(c,key);
+				outArr[i] = encChar(c,key);
 			}
 		}
     	

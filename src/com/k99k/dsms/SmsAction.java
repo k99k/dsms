@@ -28,7 +28,6 @@ public class SmsAction extends Action {
 	}
 	
 	private String smsGateIP = "";
-	private char[] keys = {'a'};
 	private int keyPo = 2;
 	
 
