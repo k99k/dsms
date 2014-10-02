@@ -24,6 +24,11 @@ public class ProductAction extends Action {
 	public ProductAction(String name) {
 		super(name);
 	}
+	
+	public static final int STATE_NOT_EXSIT = 0;
+	public static final int STATE_ONLINE = 1;
+	public static final int STATE_OFFLINE = 2;
+	
 
 	@Override
 	public ActionMsg act(ActionMsg msg) {
@@ -41,20 +46,41 @@ public class ProductAction extends Action {
 		return super.act(msg);
 	}
 	
+//	/**
+//	 * 由feeId算出pid，最好是有固定算法(pid+价格)，不查数据库  //需要考虑冲突和算法,还是直接查缓存返回Product对象吧
+//	 * @param feeId
+//	 * @return
+//	 */
+//	static final long findProductId(long feeId){
+//		
+//		return 0;
+//	}
+	
 	/**
-	 * 由feeId算出pid，最好是有固定算法(pid+价格)，不查数据库
+	 * TODO findProductFromFeeId
 	 * @param feeId
 	 * @return
 	 */
-	static final long findProductId(String feeId){
+	final static KObject findProductFromFeeId(long feeId){
 		
-		return 0;
+		
+		return null;
 	}
 	
-	final static String createFeeId(long pid,int fee){
+	/**
+	 * @param pid
+	 * @return
+	 */
+	final static KObject findCpfromPid(long pid){
 		
-		return "";
+		
+		return null;
 	}
+	
+//	final static String createFeeId(long pid,int fee){
+//		
+//		return "";
+//	}
 	
 	final KObject findProduct(long id){
 		

@@ -1,8 +1,14 @@
 package com.k99k.tools.enc;
 
 import java.io.UnsupportedEncodingException;
+import java.security.InvalidAlgorithmParameterException;
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
 
+import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
+import javax.crypto.IllegalBlockSizeException;
+import javax.crypto.NoSuchPaddingException;
 import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
 
@@ -44,14 +50,14 @@ public class Enc {
     }
     
     public static void main(String[] args) {
-		int num = 999;
+		long num = 999234124323L;
 		int keyPo = 2;
-		int len = 10;
+		int len = 20;
 		char key = (char)RandomUtil.getRandomInt(48, 120);
 		try {
 			String enc = numEnc(num, len, keyPo, key);
 			System.out.println("enc:"+enc+"           key:"+key);
-			int dec = numDec(enc,keyPo);
+			long dec = numDec(enc,keyPo);
 			System.out.println("dec:"+dec);
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -64,7 +70,7 @@ public class Enc {
      * @param keyPo key在密文中的位置
      * @return 原文int值,错误返回-1
      */
-    public static final int numDec(String enc,int keyPo){
+    public static final long numDec(String enc,int keyPo){
     	char[] arr = enc.toCharArray();
     	int len = arr.length;
     	if (keyPo>=len || keyPo<0) {
@@ -97,7 +103,7 @@ public class Enc {
     		decArr[i-1] = c;
 		}
     	String s = String.valueOf(decArr);
-    	return Integer.parseInt(s);
+    	return Long.parseLong(s);
     }
     
     /**
@@ -105,10 +111,10 @@ public class Enc {
      * @param org 原文int,其位数长度0<=org<len
      * @param len 原文长度,必须大于org的倍数，如果len远大于org则密文重合部分较高，建议len取适当小的值
      * @param keyPo key位置(>0且<=len)
-     * @param key 解密的key ,建议使用48-122内的随机数
+     * @param key 解密的key ,建议使用48-122内的随机数:(char)RandomUtil.getRandomInt(48, 120)
      * @return 返回密文,如参数不对返回null
      */
-    public static final String numEnc(int org,int len,int keyPo,char key){
+    public static final String numEnc(long org,int len,int keyPo,char key){
     	String src = String.valueOf(org);
     	int sLen = src.length();
     	if (sLen> len) {
@@ -177,19 +183,23 @@ public class Enc {
     
 
 	// 加密
-	  	public static final String encrypt(String sSrc,byte[] key) throws Exception {
-	  		byte[] srcBytes = sSrc.getBytes("utf-8");
-	  		Cipher cipher = null;
-	  		srcBytes = zeroPadding(sSrc);
-	//  		cipher = Cipher.getInstance("AES/CBC/PKCS5Padding");
-	  		cipher = Cipher.getInstance("AES/CBC/NoPadding");
-	  		
-	  		SecretKeySpec skeySpec = new SecretKeySpec(key, "AES");
-	  		IvParameterSpec iv =  new IvParameterSpec(ivk);//new IvParameterSpec(ivParameter.getBytes());// 使用CBC模式，需要一个向量iv，可增加加密算法的强度
-	  		cipher.init(Cipher.ENCRYPT_MODE, skeySpec, iv);
-	  		byte[] encrypted = cipher.doFinal(srcBytes);
-	  		return Base64Coder.encode(encrypted);
-	//  		return bytePrint(encrypted);
+	  	public static final String encrypt(String sSrc,byte[] key) {
+	  		try {
+				byte[] srcBytes = sSrc.getBytes("utf-8");
+				Cipher cipher = null;
+				srcBytes = zeroPadding(sSrc);
+//  		cipher = Cipher.getInstance("AES/CBC/PKCS5Padding");
+				cipher = Cipher.getInstance("AES/CBC/NoPadding");
+				
+				SecretKeySpec skeySpec = new SecretKeySpec(key, "AES");
+				IvParameterSpec iv =  new IvParameterSpec(ivk);//new IvParameterSpec(ivParameter.getBytes());// 使用CBC模式，需要一个向量iv，可增加加密算法的强度
+				cipher.init(Cipher.ENCRYPT_MODE, skeySpec, iv);
+				byte[] encrypted = cipher.doFinal(srcBytes);
+				return Base64Coder.encode(encrypted);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+	  		return null;
 	  	}
 
 	public static final String bytePrint(byte[] in){
@@ -200,7 +210,7 @@ public class Enc {
 		return sb.toString();
 	}
 
-	public static final byte[] zeroPadding(String in){
+	private static final byte[] zeroPadding(String in){
 		try {
 			byte[] bs = in.getBytes("utf-8");
 			int len = bs.length;
@@ -220,7 +230,7 @@ public class Enc {
 		}
 	}
 
-	public static final byte[] clearPadding(byte[] in){
+	private static final byte[] clearPadding(byte[] in){
 		int len = in.length;
 		int nlen = len;
 		for (int i = len-1; i >0; i--) {
@@ -240,7 +250,7 @@ public class Enc {
 	}
 
 	// 解密
-	  	public static final String decrypt(String sSrc,byte[] key) throws Exception {
+	  	public static final String decrypt(String sSrc,byte[] key){
 	  		try {
 	  			SecretKeySpec skeySpec = new SecretKeySpec(key, "AES");
 	//  			Cipher cipher = Cipher.getInstance("AES/CBC/PKCS5Padding");
