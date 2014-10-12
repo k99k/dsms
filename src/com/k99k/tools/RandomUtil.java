@@ -38,7 +38,8 @@ public final class RandomUtil {
 		if (to <= from) {
 			return from;
 		}
-		int re = ((int) (Math.random()*100))%(to-from) + from;
+		int len = from/10;
+		int re = ((int) (Math.random()*100*len))%(to-from) + from;
 		return re;
 	}
 	
@@ -47,7 +48,7 @@ public final class RandomUtil {
 	 * @param args
 	 */
 	public static void main(String[] args) {
-		System.out.println(getRandomInt(0, 2));
+		System.out.println(getRandomInt(10000, 99999));
 	}
 
 }

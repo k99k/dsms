@@ -12,8 +12,11 @@ import com.k99k.khunter.Action;
 import com.k99k.khunter.ActionMsg;
 import com.k99k.khunter.HttpActionMsg;
 import com.k99k.khunter.JOut;
+import com.k99k.khunter.KFilter;
 import com.k99k.khunter.KObject;
 import com.k99k.tools.RandomUtil;
+import com.k99k.tools.StringUtil;
+import com.k99k.tools.enc.Base64Coder;
 import com.k99k.tools.enc.Enc;
 
 /**
@@ -42,6 +45,10 @@ public class SmsAction extends Action {
 	public ActionMsg act(ActionMsg msg) {
 		HttpActionMsg httpmsg = (HttpActionMsg)msg;
 		HttpServletRequest req = httpmsg.getHttpReq();
+		String subact = KFilter.actPath(msg, 2, "");
+		if (subact.equals("")) {
+			
+		}
 		//TODO IP限制
 //		Enumeration<String> headers = req.getHeaderNames();
 //		while (headers.hasMoreElements()) {
@@ -82,10 +89,19 @@ public class SmsAction extends Action {
 		
 		Object obj = v;
 		System.out.println(obj.equals(9));
+		
+		String s = "12345678901234567890123456789012345678901234567890123456789012345678901234567890";
+		byte[] key = new String("1234567890123456").getBytes();
+		String enc = Enc.encrypt(s, key);
+		String enc2 = Base64Coder.encodeString(s);
+		System.out.println(enc);
+		System.out.println(enc2);
+		String dec = Enc.decrypt(enc, key);
+		System.out.println(dec);
 	}
 	
 	/**
-	 * 分解处理MO，格式: [vv][eekeeee][fee@channel@cpPara@imsi@imei]  v=veriosn,e=feeId,k=解feeId的key位置
+	 * 分解处理MO，格式: [vv][eekeeee][fee@channel@cpPara@imsi@imei@salt]  v=veriosn,e=feeId,k=解feeId的key位置
 	 * @param destNum
 	 * @param txt
 	 * @param linkId
@@ -178,37 +194,6 @@ public class SmsAction extends Action {
 	
 	
 	
-	/**
-	 * TODO 创建加密后的短信内容
-	 * @param ver
-	 * @param feeId
-	 * @param feeKeyPo
-	 * @param key
-	 * @param fee
-	 * @param channel
-	 * @param imsi
-	 * @param imei
-	 * @return
-	 */
-	private static final String buildSms(int ver,long feeId,int feeKeyPo,String key,int fee,int channel,String imsi,String imei){
-		StringBuilder sb = new StringBuilder();
-		String verEnc = encVersion(ver);
-		if (verEnc == null) {
-			return null;
-		}
-		sb.append(verEnc);
-		char fKey = (char)RandomUtil.getRandomInt(48, 120);
-		String feeEnc = Enc.numEnc(feeId, 6, feeKeyPo, fKey);
-		
-		
-		
-		return sb.toString();
-	}
-	
-	
-	
-	
-
 	public final String getSmsGateIP() {
 		return smsGateIP;
 	}

@@ -158,12 +158,12 @@ public class DownAction extends Action {
 						response.setStatus(HttpServletResponse.SC_PARTIAL_CONTENT);//200  
 					}else{
 						e.printStackTrace();
-						log.error(Err.ERR_FILE_DOWN+" file:"+file);
+						log.error(Err.ERR_FILE_DOWN+" file:"+localFileFullPath);
 					}
 				}
 			}
 		}else{
-			log.error(Err.ERR_DOWN_NOTFOUND+" file:"+file);
+			log.error(Err.ERR_DOWN_NOTFOUND+" file:"+localFileFullPath);
 //			JOut.err(404,Err.ERR_DOWN_NOTFOUND, msg);
 		}
 		return downOK;

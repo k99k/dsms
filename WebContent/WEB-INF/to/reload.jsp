@@ -34,7 +34,7 @@ else if(subact.equals("buildNewDB")){
 %>
 <form id="newdbForm" action="<%=prefix%>/console/reload/newdb" method="post">
 Rebuild DB data <span class="red bold"> All Data will be deleted!!!</span><br />
-DataSource: <input type="text" name="ds" id="ds" value="" /> 
+DataSource: <input type="text" name="ds" id="ds" value="mongodb_local" /> 
 <p><input type="submit" value=" Yes " /> </p>
 </form>
 <% }
