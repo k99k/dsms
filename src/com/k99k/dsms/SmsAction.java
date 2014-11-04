@@ -36,9 +36,11 @@ public class SmsAction extends Action {
 	
 	private String smsGateIP = "";
 	/**
-	 * feeId的key位置,因为feeId为7位，所以keyPo为0-6的值
+	 * pid的key位置,因为pid为7位，所以keyPo为0-6的值
 	 */
 	private int keyPo = 2;
+	
+	private static final byte[] pidKey = {32, 56, 90, 3, 101, 104, 6, -24, 45, 37, -9, 82, 46, -74, 29, 4};
 	
 
 	@Override
@@ -98,10 +100,17 @@ public class SmsAction extends Action {
 		System.out.println(enc2);
 		String dec = Enc.decrypt(enc, key);
 		System.out.println(dec);
+		
+		s = "201";
+		enc = Enc.encrypt(s, pidKey);
+		System.out.println("dsms_key:"+enc);
+		s = "12pq@qrqf2ACM92Ifzu@9lo3HpGHzn15HB@CfjYkoyp2tCRC@vGmckRLQz7.HiiXw4IbtceYmMnoYlD61EBPpQ2HCpF.irQ__";
+		SmsAction a = new SmsAction("test");
+		a.dealMO("15301588025",s,"233");
 	}
 	
 	/**
-	 * 分解处理MO，格式: [vv][eekeeee][fee@channel@cpPara@imsi@imei@salt]  v=veriosn,e=feeId,k=解feeId的key位置
+	 * 分解处理MO，格式: [vv][eekeeee][rrrrrfee@channel@uid@cpPara@imei@imsi] v=veriosn,e=pid,k=解pid的key位置,rrrrr表示5位salt
 	 * @param destNum
 	 * @param txt
 	 * @param linkId
@@ -116,24 +125,23 @@ public class SmsAction extends Action {
 		if (ver<1 || ver > 75) {
 			return SMSErr.ERR_MO_VER;
 		}
-		//获取feeId
-		String feeIdEnc = txt.substring(2,9);
-		long feeId = Enc.numDec(feeIdEnc, this.keyPo);
-		if (feeId < 0) {
-			//feeId解密失败
-			return SMSErr.ERR_MO_FEEID;
+		//获取pid
+		String pidEnc = txt.substring(2,9);
+		long pid = Enc.numDec(pidEnc, this.keyPo);
+		if (pid < 0) {
+			//pid解密失败
+			return SMSErr.ERR_MO_PID;
 		}
 		
-		//根据feeId获得key
-		KObject product = ProductAction.findProductFromFeeId(feeId);
-		String keyStr = (String) product.getProp("key");
+		//根据pid获得key
+		//KObject product = ProductAction.findProductFromPid(pid);
+		String keyStr = Enc.encrypt(String.valueOf(pid),Enc.rootkey);//(String) product.getProp("key");
 		if (keyStr == null) {
-			//feeId获取key失败
-			return SMSErr.ERR_MO_FEEID_KEY;
+			//pid获取key失败
+			return SMSErr.ERR_MO_PID_KEY;
 		}
-		int keyLen = keyStr.length();
-		byte[] key = new byte[keyLen];
-		for (int i = 0; i < keyLen; i++) {
+		byte[] key = new byte[16];
+		for (int i = 0; i < 16; i++) {
 			key[i] = (byte) keyStr.charAt(i);
 		}
 		
@@ -144,18 +152,21 @@ public class SmsAction extends Action {
 			//解密后面部分失败
 			return SMSErr.ERR_MO_DEC_REST;
 		}
+		System.out.println(restDec);
 		//后面部分：fee@channel@cpPara@imsi@imei
 		String[] ms = restDec.split("@");
 		if (ms.length<5) {
 			//后面部分解出的明文不合法
 			return SMSErr.ERR_MO_REST;
 		}
-		String feeStr = ms[0];
+		//[rrrrrfee@channel@uid@cpPara@imei@imsi]
+		String feeStr = ms[0].substring(5);
 		String chanStr = ms[1];
-		String cpPara =  ms[2];
-		String imsi = ms[3];
+		String uid = ms[2];
+		String cpPara =  ms[3];
 		String imei = ms[4];
-		
+		String imsi = ms[5];
+		/*
 		//判断产品状态,暂时只根据产品状态商用判为有效
 		if (product.getState() == ProductAction.STATE_ONLINE) {
 			//TODO 记录到库
@@ -175,7 +186,7 @@ public class SmsAction extends Action {
 			//TODO 记录到错误库
 			
 			
-		}
+		}*/
 		return SMSErr.OK;
 	}
 	

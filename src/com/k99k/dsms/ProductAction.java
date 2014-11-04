@@ -57,11 +57,11 @@ public class ProductAction extends Action {
 //	}
 	
 	/**
-	 * TODO findProductFromFeeId
+	 * TODO findProductFromPid
 	 * @param feeId
 	 * @return
 	 */
-	final static KObject findProductFromFeeId(long feeId){
+	final static KObject findProductFromPid(long pid){
 		
 		
 		return null;
@@ -82,17 +82,6 @@ public class ProductAction extends Action {
 //		return "";
 //	}
 	
-	final KObject findProduct(long id){
-		
-		
-		return null;
-	}
-	
-	final KObject findProduct(String feeId){
-		
-		
-		return null;
-	}
 	
 	final String makeFeeInfoFile(long pid){
 		

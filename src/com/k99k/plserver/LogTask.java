@@ -273,7 +273,7 @@ public class LogTask extends Action {
 			
 			
 			String[] mArr = rest.split("_");
-			if (mArr.length<2 || !StringUtil.isDigits(mArr[0]) || !StringUtil.isDigits(mArr[1])) {
+			if (mArr.length<2 || !StringUtil.isDigits(mArr[0])) {
 				log.error(Err.ERR_LOG_MSG+" log line:"+line);
 				return false;
 			}
