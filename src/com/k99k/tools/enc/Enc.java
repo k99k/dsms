@@ -49,20 +49,7 @@ public class Enc {
     	return (char)(in ^ key);
     }
     
-    public static void main(String[] args) {
-		long num = 999234124323L;
-		int keyPo = 2;
-		int len = 20;
-		char key = (char)RandomUtil.getRandomInt(48, 120);
-		try {
-			String enc = numEnc(num, len, keyPo, key);
-			System.out.println("enc:"+enc+"           key:"+key);
-			long dec = numDec(enc,keyPo);
-			System.out.println("dec:"+dec);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
+   
 
     /**
      * 解密,如果失败返回-1
@@ -187,9 +174,9 @@ public class Enc {
 	  		try {
 				byte[] srcBytes = sSrc.getBytes("utf-8");
 				Cipher cipher = null;
-				srcBytes = zeroPadding(sSrc);
-//  		cipher = Cipher.getInstance("AES/CBC/PKCS5Padding");
-				cipher = Cipher.getInstance("AES/CBC/NoPadding");
+//				srcBytes = zeroPadding(sSrc);
+  		cipher = Cipher.getInstance("AES/CBC/PKCS5Padding");
+//				cipher = Cipher.getInstance("AES/CBC/NoPadding");
 				
 				SecretKeySpec skeySpec = new SecretKeySpec(key, "AES");
 				IvParameterSpec iv =  new IvParameterSpec(ivk);//new IvParameterSpec(ivParameter.getBytes());// 使用CBC模式，需要一个向量iv，可增加加密算法的强度
@@ -202,12 +189,14 @@ public class Enc {
 	  		return null;
 	  	}
 
-	public static final String bytePrint(byte[] in){
+	public static final String bytesPrint(byte[] in){
 		StringBuilder sb = new StringBuilder();
 		for (int i = 0; i < in.length; i++) {
-			sb.append(in[i]);
+			sb.append(in[i]).append(",");
 		}
-		return sb.toString();
+		String out = sb.toString();
+		System.out.println(out);
+		return out;
 	}
 
 	private static final byte[] zeroPadding(String in){
@@ -253,16 +242,16 @@ public class Enc {
 	  	public static final String decrypt(String sSrc,byte[] key){
 	  		try {
 	  			SecretKeySpec skeySpec = new SecretKeySpec(key, "AES");
-	//  			Cipher cipher = Cipher.getInstance("AES/CBC/PKCS5Padding");
-	  			Cipher cipher = Cipher.getInstance("AES/CBC/NoPadding");
+	  			Cipher cipher = Cipher.getInstance("AES/CBC/PKCS5Padding");
+//	  			Cipher cipher = Cipher.getInstance("AES/CBC/NoPadding");
 	  			
 	  			IvParameterSpec iv = new IvParameterSpec(ivk);//new IvParameterSpec(ivParameter.getBytes());
 	  			cipher.init(Cipher.DECRYPT_MODE, skeySpec, iv);
 	  			byte[] encrypted1 = Base64Coder.decode(sSrc);// 先用base64解密
 	  			byte[] original = cipher.doFinal(encrypted1);
 	  			
-	  			String originalString = new String(clearPadding(original), "utf-8");
-	//  			String originalString = new String(original, "utf-8");
+//	  			String originalString = new String(clearPadding(original), "utf-8");
+	  			String originalString = new String(original, "utf-8");
 	  			
 	  			return originalString;
 	  		} catch (Exception ex) {
@@ -270,5 +259,70 @@ public class Enc {
 	  			return null;
 	  		}
 	  	}
+	  	
+	  	
+	  	public static final byte[] encBytes(byte[] srcBytes,byte[] key,byte[] newIv) throws Exception {
+			Cipher cipher = Cipher.getInstance("AES/CBC/PKCS5Padding");
+			SecretKeySpec skeySpec = new SecretKeySpec(key, "AES");
+			IvParameterSpec iv =  new IvParameterSpec(newIv);
+			cipher.init(Cipher.ENCRYPT_MODE, skeySpec, iv);
+			byte[] encrypted = cipher.doFinal(srcBytes);
+			return encrypted;
+	  	}
+	  	
+	  	
+		public static final String encText(String sSrc,byte[] key,byte[] newIv) throws Exception {
+			byte[] srcBytes = sSrc.getBytes("utf-8");
+			bytesPrint(srcBytes);
+			byte[] encrypted = encBytes(srcBytes,key,newIv);
+			return Base64.encode(encrypted);
+	  	}
+		
+		public static final byte[] decBytes(byte[] srcBytes,byte[] key,byte[] newIv) throws Exception {
+			Cipher cipher = Cipher.getInstance("AES/CBC/PKCS5Padding");
+			SecretKeySpec skeySpec = new SecretKeySpec(key, "AES");
+			IvParameterSpec iv =  new IvParameterSpec(newIv);
+			cipher.init(Cipher.DECRYPT_MODE, skeySpec, iv);
+			byte[] encrypted = cipher.doFinal(srcBytes);
+			return encrypted;
+	  	}
+	  	
+	  	
+		public static final String decText(String sSrc,byte[] key,byte[] newIv) throws Exception {
+			byte[] srcBytes = Base64.decode(sSrc);
+			byte[] decrypted = decBytes(srcBytes,key,newIv);
+			return new String(decrypted,"utf-8");
+	  	}
+		
+		
+	  	public static void main(String[] args) {
+			String s = "asdfW  #)(ssff234";
+			byte[] key = {12, 13, 12, 33, 33, 44, 3, 34, 44, 44, 9, 45, 28, 44, 22, 2};
+			byte[] ivk = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
 
+			try {
+				String enc = encText(s, key,ivk);
+				System.out.println(enc);
+				String dec = decText(enc, key, ivk);
+				System.out.println(dec);
+				
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			
+			
+//	 		long num = 999234124323L;
+//	 		int keyPo = 2;
+//	 		int len = 20;
+//	 		char key = (char)RandomUtil.getRandomInt(48, 120);
+//	 		try {
+//	 			String enc = numEnc(num, len, keyPo, key);
+//	 			System.out.println("enc:"+enc+"           key:"+key);
+//	 			long dec = numDec(enc,keyPo);
+//	 			System.out.println("dec:"+dec);
+//	 		} catch (Exception e) {
+//	 			e.printStackTrace();
+//	 		}
+	 	}
 }

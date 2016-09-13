@@ -525,7 +525,7 @@ public class JSON {
     	Object token = key;
         while (token != OBJECT_END) {
         	it.next();
-        	token = read(it,buf); // should be a colon
+        	token = read(it,buf);
             if (token != OBJECT_END) {
             	it.next();
             	token = read(it,buf);
